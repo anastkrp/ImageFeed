@@ -7,45 +7,16 @@
 
 import UIKit
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
     
     @IBOutlet private var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        let imageName = photosName[indexPath.row]
-        
-        guard let image = UIImage(named: imageName) else {
-            return
-        }
-        
-        cell.cellImage.image = image
-        cell.gradientView.addGradient()
-
-        if indexPath.row % 2 == 0 {
-            cell.likeButton.imageView?.image = UIImage(named: "Active")
-        } else {
-            cell.likeButton.imageView?.image = UIImage(named: "No Active")
-        }
-        
-        cell.dateLabel.text = dateFormatter.string(from: Date())
-    }
-    
 }
 
 extension ImagesListViewController: UITableViewDelegate {
@@ -57,7 +28,7 @@ extension ImagesListViewController: UITableViewDelegate {
         guard let image = UIImage(named: photosName[indexPath.row]) else {
             return 0
         }
-
+        
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = image.size.width
@@ -80,7 +51,7 @@ extension ImagesListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        configCell(for: imageListCell, with: indexPath)
+        imageListCell.configCell(for: imageListCell, with: indexPath, photos: photosName)
         
         return imageListCell
     }
