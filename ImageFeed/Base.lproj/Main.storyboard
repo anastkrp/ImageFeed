@@ -145,18 +145,31 @@
                                     <action selector="didTapBackButton:" destination="8qO-i9-vVi" eventType="touchUpInside" id="nLa-31-81j"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Fo-fF-0N5" userLabel="Share Button">
-                                <rect key="frame" x="162.66666666666666" y="712" width="50" height="50"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="140" translatesAutoresizingMaskIntoConstraints="NO" id="yaZ-k2-9hc">
+                                <rect key="frame" x="67.666666666666686" y="712" width="240" height="50"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1z3-T4-kVJ" userLabel="Like Button">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="1z3-T4-kVJ" secondAttribute="height" multiplier="1:1" id="qOa-U6-dHA"/>
+                                            <constraint firstAttribute="width" constant="50" id="u1g-dU-79z"/>
+                                        </constraints>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="Like"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Fo-fF-0N5" userLabel="Share Button">
+                                        <rect key="frame" x="190" y="0.0" width="50" height="50"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="Sharing"/>
+                                        <connections>
+                                            <action selector="didTapShareButton:" destination="8qO-i9-vVi" eventType="touchUpInside" id="IZb-Wg-mjZ"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="D4g-cr-1dM"/>
-                                    <constraint firstAttribute="height" constant="50" id="XmR-QH-Pue"/>
+                                    <constraint firstAttribute="height" constant="50" id="8gV-kp-xBb"/>
                                 </constraints>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="Sharing"/>
-                                <connections>
-                                    <action selector="didTapShareButton:" destination="8qO-i9-vVi" eventType="touchUpInside" id="IZb-Wg-mjZ"/>
-                                </connections>
-                            </button>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="eHy-hQ-ANL"/>
                         <color key="backgroundColor" name="YP Black"/>
@@ -164,11 +177,11 @@
                             <constraint firstItem="Nqy-Aa-GeF" firstAttribute="leading" secondItem="eHy-hQ-ANL" secondAttribute="leading" id="2FO-QP-GJa"/>
                             <constraint firstItem="Nqy-Aa-GeF" firstAttribute="top" secondItem="NlF-8R-heg" secondAttribute="top" id="4Q6-r3-zDc"/>
                             <constraint firstAttribute="bottom" secondItem="Nqy-Aa-GeF" secondAttribute="bottom" id="5Ud-B9-fFg"/>
+                            <constraint firstItem="eHy-hQ-ANL" firstAttribute="bottom" secondItem="yaZ-k2-9hc" secondAttribute="bottom" constant="16" id="G4G-oG-odm"/>
                             <constraint firstItem="H3n-DE-vDs" firstAttribute="top" secondItem="eHy-hQ-ANL" secondAttribute="top" constant="8" id="Gia-0j-5Fk"/>
                             <constraint firstItem="Nqy-Aa-GeF" firstAttribute="trailing" secondItem="eHy-hQ-ANL" secondAttribute="trailing" id="ZeI-GQ-fyp"/>
-                            <constraint firstItem="6Fo-fF-0N5" firstAttribute="centerX" secondItem="eHy-hQ-ANL" secondAttribute="centerX" id="geV-d4-Awe"/>
-                            <constraint firstItem="eHy-hQ-ANL" firstAttribute="bottom" secondItem="6Fo-fF-0N5" secondAttribute="bottom" constant="16" id="ppM-0S-fDD"/>
                             <constraint firstItem="H3n-DE-vDs" firstAttribute="leading" secondItem="eHy-hQ-ANL" secondAttribute="leading" constant="8" id="qsv-8g-yEc"/>
+                            <constraint firstItem="yaZ-k2-9hc" firstAttribute="centerX" secondItem="NlF-8R-heg" secondAttribute="centerX" id="vl1-8Q-klA"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="FtA-La-C1O"/>
@@ -224,6 +237,7 @@
         <image name="0" width="1600" height="1059"/>
         <image name="Active" width="42" height="42"/>
         <image name="Backward" width="24" height="24"/>
+        <image name="Like" width="51" height="51"/>
         <image name="Sharing" width="51" height="51"/>
         <image name="tab_editorial_active" width="30" height="30"/>
         <image name="tab_profile_active" width="30" height="30"/>
