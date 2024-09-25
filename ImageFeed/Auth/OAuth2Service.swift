@@ -11,11 +11,11 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     
-    private let tokenUrl = "https://unsplash.com/oauth/token"
     private let tokenStorage = OAuth2TokenStorage()
     
-    func makeOAuthTokenRequest(code: String) -> URLRequest {
-        guard var urlComponents = URLComponents(string: tokenUrl) else {
+    private func makeOAuthTokenRequest(code: String) -> URLRequest {
+        guard var urlComponents = URLComponents(string: Constants.tokenUrl) else {
+            print("Ошибка - urlComponents")
             fatalError("Ошибка urlComponents")
         }
         urlComponents.queryItems = [
@@ -27,6 +27,7 @@ final class OAuth2Service {
         ]
         
         guard let url = urlComponents.url else {
+            print("Ошибка - url")
             fatalError("Ошибка url")
         }
 
@@ -44,7 +45,7 @@ final class OAuth2Service {
                 do {
                     let response = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
                     self.tokenStorage.token = response.accessToken
-                    
+                    print("Получен токен - \(response.accessToken)")
                     completion(.success(response.accessToken))
                 } catch {
                     print("Ошибка декодирования - \(error)")
