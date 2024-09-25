@@ -10,7 +10,7 @@ import WebKit
 
 final class WebViewViewController: UIViewController {
     
-    enum WebViewConstants {
+    private enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
     
