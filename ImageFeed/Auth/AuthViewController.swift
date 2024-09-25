@@ -34,15 +34,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
         
-        oauth2Service.fetchOAuthToken(code) { result in
-            switch result {
-            case .success(let token):
-                self.delegate?.authViewController(self, didAuthenticateWithCode: code)
-                print("Получен токен - \(token)")
-            case .failure(let error):
-                print("Ошибка получения токена - \(error)")
-            }
-        }
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
