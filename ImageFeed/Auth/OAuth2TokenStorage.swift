@@ -6,17 +6,24 @@
 //
 
 import Foundation
+import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
-    private let storage: UserDefaults = .standard
-    private let tokenKey = "tokenKey"
+    private let tokenKey = "Auth token"
     
     var token: String? {
         get {
-            return storage.string(forKey: tokenKey)
+            let token: String? = KeychainWrapper.standard.string(forKey: tokenKey)
+            return token
         }
         set {
-            storage.set(newValue, forKey: tokenKey)
+            guard let token = newValue else {
+                return print("[OAuth2TokenStorage]: Токен не может быть nil")
+            }
+            let isSuccess = KeychainWrapper.standard.set(token, forKey: tokenKey)
+            guard isSuccess else {
+                return print("[OAuth2TokenStorage]: Ошибка сохранения токена")
+            }
         }
     }
 }

@@ -6,12 +6,19 @@
 //
 
 import UIKit
+import Kingfisher
+import SwiftKeychainWrapper
 
 final class ProfileViewController: UIViewController {
+    
+    private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
     
     private lazy var avatarImageView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "Photo"))
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = (image.frame.size.height) / 2
+        image.clipsToBounds = true
         return image
     }()
     
@@ -51,11 +58,46 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private let storage = OAuth2TokenStorage()
+    
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypBlack
         createUI()
+        
+        if let profile = profileService.profile {
+            updateProfileDetails(profile: profile)
+        } else {
+            print("Ошибка: Профиль не найден")
+        }
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = profileImageService.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        avatarImageView.kf.setImage(with: url, placeholder: UIImage(named: "UserpickStub.png"))
     }
     
     private func createUI() {
@@ -86,6 +128,8 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didTapLogoutButton(){
-        
+        guard KeychainWrapper.standard.removeObject(forKey: "Auth token") else {
+            return print("[didTapLogoutButton]: Не удалось удалить токен")
+        }
     }
 }
