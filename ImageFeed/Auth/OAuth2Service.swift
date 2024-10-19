@@ -9,15 +9,27 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-    private init() {}
     
     private let tokenStorage = OAuth2TokenStorage()
     
-    private func makeOAuthTokenRequest(code: String) -> URLRequest {
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    
+    private let session = URLSession.shared
+    
+    private init() {}
+    
+    enum AuthServiceError: Error {
+        case invalidRequest
+    }
+    
+    private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: Constants.tokenUrl) else {
-            print("Ошибка - urlComponents")
-            fatalError("Ошибка urlComponents")
+            print("[makeOAuthTokenRequest]: Ошибка urlComponents")
+            assertionFailure("Ошибка urlComponents")
+            return nil
         }
+        
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -27,37 +39,57 @@ final class OAuth2Service {
         ]
         
         guard let url = urlComponents.url else {
-            print("Ошибка - url")
+            print("[makeOAuthTokenRequest]: Ошибка url")
             fatalError("Ошибка url")
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         return request
     }
     
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        let request = makeOAuthTokenRequest(code: code)
+        assert(Thread.isMainThread)
         
-        let task = URLSession.shared.data(for: request) { [weak self] result in
+        if task != nil {
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        } else {
+            if lastCode == code {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        }
+        
+        lastCode = code
+        
+        guard let request = makeOAuthTokenRequest(code: code) else {
+            print("[fetchOAuthToken]: Ошибка создания запроса")
+            completion(.failure(AuthServiceError.invalidRequest))
+            return
+        }
+        
+        let task = session.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             guard let self else { return }
             
             switch result {
             case .success(let data):
-                do {
-                    let response = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    self.tokenStorage.token = response.accessToken
-                    print("Получен токен - \(response.accessToken)")
-                    completion(.success(response.accessToken))
-                } catch {
-                    print("Ошибка декодирования - \(error)")
-                    completion(.failure(error))
-                }
+                self.tokenStorage.token = data.accessToken
+                
+                print("[fetchOAuthToken]: Токен получен")
+                completion(.success(data.accessToken))
             case .failure(let error):
-                print("Ошибка сети - \(error)")
+                print("[fetchOAuthToken]: Ошибка сети \(error.localizedDescription)")
                 completion(.failure(error))
             }
+            self.task = nil
+            self.lastCode = nil
         }
+        self.task = task
         task.resume()
     }
 }

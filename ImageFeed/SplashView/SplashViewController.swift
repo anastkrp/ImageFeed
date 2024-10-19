@@ -14,14 +14,48 @@ final class SplashViewController: UIViewController {
     private let oauth2Service = OAuth2Service.shared
     private let storage = OAuth2TokenStorage()
     
+    private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
+    
+    private lazy var logoImageView: UIImageView = {
+        let image = UIImageView(image: UIImage(named: "logo"))
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.view.backgroundColor = .ypBlack
+        createUI()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if storage.token != nil {
+        if let token = storage.token {
+            fetchProfile(token)
             switchToTabBarController()
         } else {
-            performSegue(withIdentifier: showAuthViewIdentifier, sender: nil)
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            guard let viewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+                return print("[SplashViewController]: Не удалось создать AuthViewController")
+            }
+            viewController.delegate = self
+            viewController.modalPresentationStyle = .fullScreen
+            self.present(viewController, animated: true, completion: nil)
         }
+    }
+    
+    private func createUI() {
+        view.addSubview(logoImageView)
+        
+        NSLayoutConstraint.activate([
+            logoImageView.heightAnchor.constraint(equalToConstant: 77),
+            logoImageView.widthAnchor.constraint(equalToConstant: 74),
+            logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
     }
     
     private func switchToTabBarController() {
@@ -33,23 +67,13 @@ final class SplashViewController: UIViewController {
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
     }
-}
-
-
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showAuthViewIdentifier {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let viewController = navigationController.viewControllers[0] as? AuthViewController
-            else {
-                assertionFailure("Failed to prepare for \(showAuthViewIdentifier)")
-                return
-            }
-            viewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так(",
+                                      message: "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
 
@@ -58,17 +82,51 @@ extension SplashViewController: AuthViewControllerDelegate {
         vc.dismiss(animated: true) { [weak self] in
             guard let self else { return }
             self.fetchOAuthToken(code)
+            
+            guard let token = storage.token else { return }
+            fetchProfile(token)
         }
     }
     
     private func fetchOAuthToken(_ code: String) {
+        UIBlockingProgressHUD.show()
+        
         oauth2Service.fetchOAuthToken(code) { [weak self] result in
             guard let self else { return }
+            
+            UIBlockingProgressHUD.dismiss()
+            
             switch result {
             case .success:
                 self.switchToTabBarController()
             case .failure:
-                // TODO [Sprint 11]
+                showAlert()
+                print("[fetchOAuthToken]: Ошибка получения токена")
+                break
+            }
+        }
+    }
+    
+    private func fetchProfile(_ token: String) {
+        UIBlockingProgressHUD.show()
+        
+        profileService.fetchProfile(token) { result in
+            
+            UIBlockingProgressHUD .dismiss()
+            
+            switch result {
+            case .success(let profile):
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { result in
+                    switch result {
+                    case .success:
+                        print("[fetchProfileImageURL]: URL картинки получен")
+                    case .failure:
+                        print("[fetchProfileImageURL]: Ошибка получения URL картинки профиля")
+                        break
+                    }
+                }
+            case .failure:
+                print("[fetchProfile]: Ошибка получения профиля")
                 break
             }
         }
