@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
@@ -22,14 +23,31 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet private weak var dateLabel: UILabel!
     @IBOutlet private weak var gradientView: UIView!
     
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath, photos name: [String]) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = nil // ? например, очистить какие-то приватные поля
+    }
+    
+    func configCell(for cell: ImagesListCell, with indexPath: IndexPath, photos name: [Photo], _ table: UITableView) {
         let imageName = name[indexPath.row]
         
-        guard let image = UIImage(named: imageName) else {
+        guard let urlImage = URL(string: imageName.thumbImageURL) else {
+            print("[configCell] Ошибка: Некорректный URL")
             return
         }
         
-        cell.cellImage.image = image
+        cell.cellImage.kf.indicatorType = .activity
+        cell.cellImage.kf.setImage(with: urlImage, placeholder: UIImage(named: "Stub.png")) { result in
+            switch result {
+            case .success:
+                table.reloadRows(at: [indexPath], with: .automatic)
+            case .failure:
+                print("[configCell] Ошибка: Не удалось загрузить изображение")
+                break
+            }
+        }
         cell.gradientView.addGradient()
         
         if indexPath.row % 2 == 0 {
