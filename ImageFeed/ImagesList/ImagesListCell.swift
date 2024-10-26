@@ -18,6 +18,8 @@ final class ImagesListCell: UITableViewCell {
         return formatter
     }()
     
+    weak var delegate: ImagesListCellDelegate?
+    
     @IBOutlet private weak var cellImage: UIImageView!
     @IBOutlet private weak var likeButton: UIButton!
     @IBOutlet private weak var dateLabel: UILabel!
@@ -25,9 +27,12 @@ final class ImagesListCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
         cellImage.kf.cancelDownloadTask()
-        cellImage.image = nil // ? например, очистить какие-то приватные поля
+        cellImage.image = nil
+    }
+    
+    @IBAction private func likeButtonClicked(_ sender: Any) {
+        delegate?.imageListCellDidTapLike(self)
     }
     
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath, photos name: [Photo], _ table: UITableView) {
@@ -37,6 +42,9 @@ final class ImagesListCell: UITableViewCell {
             print("[configCell] Ошибка: Некорректный URL")
             return
         }
+        
+        cell.likeButton.imageView?.image = UIImage(named: imageName.isLiked ? "Active" : "No_Active")
+        cell.dateLabel.text = dateToSrting(imageName.createdAt)
         
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(with: urlImage, placeholder: UIImage(named: "Stub.png")) { result in
@@ -50,12 +58,17 @@ final class ImagesListCell: UITableViewCell {
         }
         cell.gradientView.addGradient()
         
-        if indexPath.row % 2 == 0 {
-            cell.likeButton.imageView?.image = UIImage(named: "Active")
-        } else {
-            cell.likeButton.imageView?.image = UIImage(named: "No_Active")
-        }
-        
         cell.dateLabel.text = dateFormatter.string(from: Date())
+    }
+    
+    func setIsLiked(_ isLiked: Bool) {
+        let imageName = isLiked ? "No_Active" : "Active"
+        likeButton.imageView?.image = UIImage(named: imageName)
+    }
+    
+    private func dateToSrting(_ date: Date?) -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: date ?? Date())
     }
 }

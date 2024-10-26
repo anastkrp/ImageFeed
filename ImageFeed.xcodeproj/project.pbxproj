@@ -30,6 +30,8 @@
 		79B118B62C920C18009E9054 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B118B52C920C18009E9054 /* UILabel+Extensions.swift */; };
 		79B413232CBD0AC800F04108 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 79B413222CBD0AC800F04108 /* ProgressHUD */; };
 		79B413252CBD19B600F04108 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B413242CBD19A500F04108 /* UIBlockingProgressHUD.swift */; };
+		79C51DF52CCD27890058B90F /* ImagesListCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C51DF42CCD27870058B90F /* ImagesListCellDelegate.swift */; };
+		79C51DF72CCD30B10058B90F /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C51DF62CCD30A90058B90F /* Array+Extensions.swift */; };
 		79D57C9E2C85AA7300DB324B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D57C9D2C85AA7300DB324B /* AppDelegate.swift */; };
 		79D57CA02C85AA7300DB324B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D57C9F2C85AA7300DB324B /* SceneDelegate.swift */; };
 		79D57CA22C85AA7300DB324B /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D57CA12C85AA7300DB324B /* ImagesListViewController.swift */; };
@@ -61,6 +63,8 @@
 		799A3B072CA15BAC000ACF23 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		79B118B52C920C18009E9054 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		79B413242CBD19A500F04108 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
+		79C51DF42CCD27870058B90F /* ImagesListCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCellDelegate.swift; sourceTree = "<group>"; };
+		79C51DF62CCD30A90058B90F /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		79D57C9A2C85AA7300DB324B /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79D57C9D2C85AA7300DB324B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79D57C9F2C85AA7300DB324B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -208,6 +212,7 @@
 			children = (
 				79D57CA12C85AA7300DB324B /* ImagesListViewController.swift */,
 				79DDD2272C8740930078ABE0 /* ImagesListCell.swift */,
+				79C51DF42CCD27870058B90F /* ImagesListCellDelegate.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -216,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				79B413242CBD19A500F04108 /* UIBlockingProgressHUD.swift */,
+				79C51DF62CCD30A90058B90F /* Array+Extensions.swift */,
 				79DDD22B2C884BA10078ABE0 /* UIColor+Extensions.swift */,
 				790902A92C889AA5005E3607 /* UIView+Extensions.swift */,
 				799A3AFF2CA07F97000ACF23 /* URLSession+data.swift */,
@@ -304,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				799A3AF82C9D827D000ACF23 /* AuthViewController.swift in Sources */,
+				79C51DF72CCD30B10058B90F /* Array+Extensions.swift in Sources */,
 				790902AA2C889AA5005E3607 /* UIView+Extensions.swift in Sources */,
 				79D57CA22C85AA7300DB324B /* ImagesListViewController.swift in Sources */,
 				799809C72CCA785E000EC2AD /* Photo.swift in Sources */,
@@ -317,6 +324,7 @@
 				79B413252CBD19B600F04108 /* UIBlockingProgressHUD.swift in Sources */,
 				799A3AFE2CA037E2000ACF23 /* OAuth2Service.swift in Sources */,
 				793BF5212CBED89C00F57D87 /* ProfileImageService.swift in Sources */,
+				79C51DF52CCD27890058B90F /* ImagesListCellDelegate.swift in Sources */,
 				799A3AF52C9D6EEE000ACF23 /* Constants.swift in Sources */,
 				799A3B002CA07F97000ACF23 /* URLSession+data.swift in Sources */,
 				79714C902C8B3E5C008BD502 /* ProfileViewController.swift in Sources */,

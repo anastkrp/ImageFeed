@@ -21,10 +21,14 @@ final class ImagesListService {
     
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
+    private enum ImageListServiceError: Error {
+        case invalidRequest
+    }
+    
     private init() {}
     
     func fetchPhotosNextPage() {
-        // определить, идёт ли сейчас загрузка
+        
         guard !loading else { return }
         
         let nextPage = (lastLoadedPage ?? 0) + 1
@@ -85,11 +89,57 @@ final class ImagesListService {
         task.resume()
     }
     
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let url = URL(string: "\(defaultBaseURL)/photos/\(photoId)/like") else {
+            print("[changeLike]: Ошибка url")
+            completion(.failure(ImageListServiceError.invalidRequest))
+            return
+        }
+        
+        guard let token = tokenStorage.token else {
+            print("[changeLike]: Ошибка получения токена")
+            completion(.failure(ImageListServiceError.invalidRequest))
+            return
+        }
+        
+        let httpMethod = isLike ? "DELETE" : "POST"
+        var request = URLRequest(url: url)
+        request.httpMethod = httpMethod
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let task = session.data(for: request) { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                        let photo = self.photos[index]
+                        let newPhoto = Photo(id: photo.id,
+                                             size: photo.size,
+                                             createdAt: photo.createdAt,
+                                             welcomeDescription: photo.welcomeDescription,
+                                             thumbImageURL: photo.thumbImageURL,
+                                             largeImageURL: photo.largeImageURL,
+                                             isLiked: !photo.isLiked)
+                        self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
+                    }
+                }
+                print("[changeLike]: Изменение лайка успешно")
+                completion(.success(()))
+            case .failure(let error):
+                print("[changeLike]: Ошибка сети \(error.localizedDescription)")
+                completion(.failure(ImageListServiceError.invalidRequest))
+            }
+        }
+        task.resume()
+    }
+    
     private func dateFromSrting(_ string: String?) -> Date? {
         guard let string else { return nil }
         
         let formatter = DateFormatter()
-        formatter.dateFormat = "MM-dd-yyyy HH:mm"
+        formatter.dateFormat = "d MMMM yyyy"
         return formatter.date(from: string)
     }
 }
