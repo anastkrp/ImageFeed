@@ -142,4 +142,8 @@ final class ImagesListService {
         formatter.dateFormat = "d MMMM yyyy"
         return formatter.date(from: string)
     }
+    
+    func resetImagesList() {
+        photos.removeAll()
+    }
 }

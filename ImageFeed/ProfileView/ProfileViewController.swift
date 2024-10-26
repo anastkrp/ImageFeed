@@ -131,5 +131,6 @@ final class ProfileViewController: UIViewController {
         guard KeychainWrapper.standard.removeObject(forKey: "Auth token") else {
             return print("[didTapLogoutButton]: Не удалось удалить токен")
         }
+        ProfileLogoutService.shared.logout()
     }
 }
