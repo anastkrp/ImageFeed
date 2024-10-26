@@ -61,9 +61,7 @@ final class ImagesListViewController: UIViewController {
                 assertionFailure("Invalid segue destination")
                 return
             }
-            
-            let image = UIImage(named: photosName[indexPath.row])
-            viewController.image = image
+            viewController.imageURL = URL(string: photos[indexPath.row].largeImageURL)
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -130,8 +128,16 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .failure:
                 print("[imageListCellDidTapLike] Ошибка: не удалось изменить лайк")
                 UIBlockingProgressHUD.dismiss()
-                // TODO: Показать ошибку с использованием UIAlertController
+                self.showAlert()
             }
         }
+    }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так(",
+                                      message: "Не удалось изменить лайк",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
