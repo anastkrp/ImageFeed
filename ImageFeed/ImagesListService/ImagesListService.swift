@@ -19,9 +19,15 @@ final class ImagesListService {
     private let session = URLSession.shared
     private var loading = false
     
-    private static let dateFormatter: DateFormatter = {
+    private let isoFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        return formatter
+    }()
+    
+    private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM yyyy"
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
         return formatter
     }()
     
@@ -143,11 +149,11 @@ final class ImagesListService {
     
     private func dateFromSrting(_ string: String?) -> Date? {
         guard let string else { return nil }
-        return ImagesListService.dateFormatter.date(from: string)
+        return isoFormatter.date(from: string)
     }
     
     func dateToString(_ date: Date?) -> String? {
-        return ImagesListService.dateFormatter.string(from: date ?? Date())
+        return dateFormatter.string(from: date ?? Date())
     }
     
     func resetImagesList() {
