@@ -11,13 +11,6 @@ import Kingfisher
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
-    
     weak var delegate: ImagesListCellDelegate?
     
     @IBOutlet private weak var cellImage: UIImageView!
@@ -44,7 +37,7 @@ final class ImagesListCell: UITableViewCell {
         }
         
         cell.likeButton.imageView?.image = UIImage(named: imageName.isLiked ? "Active" : "No_Active")
-        cell.dateLabel.text = dateToSrting(imageName.createdAt)
+        cell.dateLabel.text = ImagesListService.shared.dateToString(imageName.createdAt)
         
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(with: urlImage, placeholder: UIImage(named: "Stub.png")) { result in
@@ -57,18 +50,10 @@ final class ImagesListCell: UITableViewCell {
             }
         }
         cell.gradientView.addGradient()
-        
-        cell.dateLabel.text = dateFormatter.string(from: Date())
     }
     
     func setIsLiked(_ isLiked: Bool) {
         let imageName = isLiked ? "No_Active" : "Active"
         likeButton.imageView?.image = UIImage(named: imageName)
-    }
-    
-    private func dateToSrting(_ date: Date?) -> String? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM yyyy"
-        return formatter.string(from: date ?? Date())
     }
 }

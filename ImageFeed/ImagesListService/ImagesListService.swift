@@ -19,6 +19,12 @@ final class ImagesListService {
     private let session = URLSession.shared
     private var loading = false
     
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter
+    }()
+    
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
     private enum ImageListServiceError: Error {
@@ -137,10 +143,11 @@ final class ImagesListService {
     
     private func dateFromSrting(_ string: String?) -> Date? {
         guard let string else { return nil }
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM yyyy"
-        return formatter.date(from: string)
+        return ImagesListService.dateFormatter.date(from: string)
+    }
+    
+    func dateToString(_ date: Date?) -> String? {
+        return ImagesListService.dateFormatter.string(from: date ?? Date())
     }
     
     func resetImagesList() {
