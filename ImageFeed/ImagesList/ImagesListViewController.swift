@@ -124,12 +124,11 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .success:
                 self.photos = self.imagesListService.photos
                 cell.setIsLiked(self.photos[indexPath.row].isLiked)
-                UIBlockingProgressHUD.dismiss()
             case .failure:
                 print("[imageListCellDidTapLike] Ошибка: не удалось изменить лайк")
-                UIBlockingProgressHUD.dismiss()
                 self.showAlert()
             }
+            UIBlockingProgressHUD.dismiss()
         }
     }
     
