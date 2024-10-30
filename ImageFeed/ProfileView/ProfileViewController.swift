@@ -68,8 +68,11 @@ final class ProfileViewController: UIViewController {
         self.view.backgroundColor = .ypBlack
         createUI()
         
+        addGradient()
+        
         if let profile = profileService.profile {
             updateProfileDetails(profile: profile)
+            removeGradient()
         } else {
             print("Ошибка: Профиль не найден")
         }
@@ -125,6 +128,29 @@ final class ProfileViewController: UIViewController {
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor)
         ])
+    }
+    
+    private func addGradient() {
+        self.view.layoutIfNeeded()
+        
+        nameLabel.animateGradeint(width: nameLabel.bounds.width / 1.3,
+                                  height: nameLabel.bounds.height)
+        
+        loginNameLabel.animateGradeint(width: loginNameLabel.bounds.width / 2,
+                                       height: loginNameLabel.bounds.height)
+        
+        descriptionLabel.animateGradeint(width: descriptionLabel.bounds.size.width / 3,
+                                         height: descriptionLabel.bounds.height)
+        
+        avatarImageView.animateGradeint(width: 70.0,
+                                        height: 70.0)
+    }
+    
+    private func removeGradient() {
+        nameLabel.layer.sublayers?.removeAll()
+        loginNameLabel.layer.sublayers?.removeAll()
+        descriptionLabel.layer.sublayers?.removeAll()
+        avatarImageView.layer.sublayers?.removeAll()
     }
     
     @objc private func didTapLogoutButton(){
