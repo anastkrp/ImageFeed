@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "UserpickStub 1.png",
+      "filename" : "Stub.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "UserpickStub.png",
+      "filename" : "Stub 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "UserpickStub 2.png",
+      "filename" : "Stub 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

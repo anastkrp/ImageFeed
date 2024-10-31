@@ -128,8 +128,17 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didTapLogoutButton(){
-        guard KeychainWrapper.standard.removeObject(forKey: "Auth token") else {
-            return print("[didTapLogoutButton]: Не удалось удалить токен")
-        }
+        let alert = UIAlertController(title: "Пока, пока!",
+                                      message: "Уверены что хотите выйти?",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Да", style: .default, handler: { _ in
+            guard KeychainWrapper.standard.removeObject(forKey: "Auth token") else {
+                return print("[didTapLogoutButton]: Не удалось удалить токен")
+            }
+            ProfileLogoutService.shared.logout()
+        }))
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+        
     }
 }

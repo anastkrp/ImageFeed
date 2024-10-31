@@ -6,38 +6,54 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
+    weak var delegate: ImagesListCellDelegate?
     
     @IBOutlet private weak var cellImage: UIImageView!
     @IBOutlet private weak var likeButton: UIButton!
     @IBOutlet private weak var dateLabel: UILabel!
     @IBOutlet private weak var gradientView: UIView!
     
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath, photos name: [String]) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = nil
+    }
+    
+    @IBAction private func likeButtonClicked(_ sender: Any) {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
+    func configCell(for cell: ImagesListCell, with indexPath: IndexPath, photos name: [Photo], _ table: UITableView) {
         let imageName = name[indexPath.row]
         
-        guard let image = UIImage(named: imageName) else {
+        guard let urlImage = URL(string: imageName.thumbImageURL) else {
+            print("[configCell] Ошибка: Некорректный URL")
             return
         }
         
-        cell.cellImage.image = image
-        cell.gradientView.addGradient()
+        cell.likeButton.imageView?.image = UIImage(named: imageName.isLiked ? "Active" : "No_Active")
+        cell.dateLabel.text = ImagesListService.shared.dateToString(imageName.createdAt)
         
-        if indexPath.row % 2 == 0 {
-            cell.likeButton.imageView?.image = UIImage(named: "Active")
-        } else {
-            cell.likeButton.imageView?.image = UIImage(named: "No_Active")
+        cell.cellImage.kf.indicatorType = .activity
+        cell.cellImage.kf.setImage(with: urlImage, placeholder: UIImage(named: "Stub.png")) { result in
+            switch result {
+            case .success:
+                table.reloadRows(at: [indexPath], with: .automatic)
+            case .failure:
+                print("[configCell] Ошибка: Не удалось загрузить изображение")
+                break
+            }
         }
-        
-        cell.dateLabel.text = dateFormatter.string(from: Date())
+        cell.gradientView.addGradient()
+    }
+    
+    func setIsLiked(_ isLiked: Bool) {
+        let imageName = isLiked ? "No_Active" : "Active"
+        likeButton.imageView?.image = UIImage(named: imageName)
     }
 }
