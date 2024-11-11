@@ -60,6 +60,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
                                            action: #selector(self.didTapLogoutButton))
         button.tintColor = .ypRed
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "Logout_Button"
         return button
     }()
     
@@ -118,6 +119,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             ProfileLogoutService.shared.logout()
         }))
         alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        alert.view.accessibilityIdentifier = "Alert"
         present(alert, animated: true, completion: nil)
     }
 }
