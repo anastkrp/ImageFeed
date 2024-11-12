@@ -9,10 +9,15 @@ import UIKit
 import Kingfisher
 import SwiftKeychainWrapper
 
-final class ProfileViewController: UIViewController {
+public protocol ProfileViewControllerProtocol: AnyObject {
+    var presenter: ProfileViewPresenterProtocol? { get set }
+    func updateProfileDetails(name: String, login: String, description: String)
+    func updateAvatar(url: URL)
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
-    private let profileService = ProfileService.shared
-    private let profileImageService = ProfileImageService.shared
+    var presenter: ProfileViewPresenterProtocol?
     
     private lazy var avatarImageView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "Photo"))
@@ -55,52 +60,28 @@ final class ProfileViewController: UIViewController {
                                            action: #selector(self.didTapLogoutButton))
         button.tintColor = .ypRed
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "Logout_Button"
         return button
     }()
     
-    private let storage = OAuth2TokenStorage()
-    
-    private var profileImageServiceObserver: NSObjectProtocol?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.view.backgroundColor = .ypBlack
         createUI()
-        
-        if let profile = profileService.profile {
-            updateProfileDetails(profile: profile)
-        } else {
-            print("Ошибка: Профиль не найден")
-        }
-        
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter?.viewDidLoad()
     }
     
-    private func updateProfileDetails(profile: Profile) {
-        nameLabel.text = profile.name
-        loginNameLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio
+    func updateProfileDetails(name: String, login: String, description: String) {
+        nameLabel.text = name
+        loginNameLabel.text = login
+        descriptionLabel.text = description
     }
     
-    private func updateAvatar() {
-        guard
-            let profileImageURL = profileImageService.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
+    func updateAvatar(url: URL) {
         avatarImageView.kf.setImage(with: url, placeholder: UIImage(named: "UserpickStub.png"))
     }
     
     private func createUI() {
+        view.backgroundColor = .ypBlack
         view.addSubview(avatarImageView)
         view.addSubview(logoutButton)
         
@@ -138,7 +119,7 @@ final class ProfileViewController: UIViewController {
             ProfileLogoutService.shared.logout()
         }))
         alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        alert.view.accessibilityIdentifier = "Alert"
         present(alert, animated: true, completion: nil)
-        
     }
 }
