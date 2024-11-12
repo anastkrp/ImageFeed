@@ -10,7 +10,6 @@ import Foundation
 public protocol ProfileViewPresenterProtocol {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
-    func loadAvatar()
 }
 
 final class ProfileViewPresenter: ProfileViewPresenterProtocol {
@@ -50,7 +49,7 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
             }
     }
     
-    func loadAvatar() {
+    private func loadAvatar() {
         guard
             let profileImageURL = profileImageService.avatarURL,
             let url = URL(string: profileImageURL)

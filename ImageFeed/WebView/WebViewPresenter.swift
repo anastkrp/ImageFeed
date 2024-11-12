@@ -21,7 +21,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
     
-    var authHelper: AuthHelperProtocol
+    private var authHelper: AuthHelperProtocol
     
     init(authHelper: AuthHelperProtocol) {
         self.authHelper = authHelper
